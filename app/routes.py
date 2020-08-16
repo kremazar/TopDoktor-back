@@ -1,4 +1,4 @@
-from flask import render_template,jsonify,json,request
+from flask import Blueprint, jsonify, request, current_app
 from app import app
 from flask import render_template, flash, redirect
 from app.models import User,Doktori,Ocjena
@@ -6,32 +6,34 @@ from flask import request,url_for
 from werkzeug.urls import url_parse
 from app import db
 from flask_cors import CORS, cross_origin
-
+import jwt
+from datetime import datetime, timedelta
 
 @cross_origin()
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    email=request.get_json()['email']
-    password=request.get_json()['password']
-    user = User.query.filter_by(email=email).first()
-    if user.password == password:
-        result="OK"
-    else:
-        result = jsonify({"error": "invalid email and password"})
-    return result
+    data = request.get_json()
+    user = User.authenticate(**data)
+
+    if not user:
+        return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
+    token = jwt.encode({
+        'sub': user.email,
+        'iat':datetime.utcnow(),
+        'exp': datetime.utcnow() + timedelta(minutes=30)},
+        current_app.config['SECRET_KEY'])
+    return jsonify({ 'token': token.decode('UTF-8') })
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    username=request.get_json()['username']
     email=request.get_json()['email']
     password=request.get_json()['password']
-    user = User(username=username, email=email,password=password)
+    user = User(email=email,password=password)
     db.session.add(user)
     db.session.commit()
     result={
-        'username':username,
         'email':email,
         'password':password,
     }
@@ -40,13 +42,15 @@ def register():
 @app.route('/ocjeni', methods=['GET', 'POST'])
 def ocjeni():
     ocjena=request.get_json()['ocjena']
+    komentar=request.get_json()['komentar']
     user_id=request.get_json()['user_id']
     doktor_id=request.get_json()['doktor_id']
-    ocjena = Ocjena(ocjena=ocjena, user_id=user_id,doktor_id=doktor_id)
+    ocjena = Ocjena(ocjena=ocjena,komentar=komentar, user_id=user_id,doktor_id=doktor_id)
     db.session.add(ocjena)
     db.session.commit()
     result={
         'ocjena':ocjena,
+        'komentar':komentar,
         'user_id':user_id,
         'doktor_id':doktor_id
     }
@@ -77,6 +81,14 @@ def doktori():
     return { "data": [
         {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica}
         for doc in doktor
+    ]}
+
+@app.route('/ocjena')
+def ocjena():
+    ocjena = Ocjena.query.all()
+    return { "data": [
+        {"id": doc.id,"ocjena": doc.ocjena,"komentar": doc.komentar,"doktor_id": doc.doktor_id,"user_id": doc.user_id}
+        for doc in ocjena
     ]}
 
 @app.route('/doktor/<id>')
