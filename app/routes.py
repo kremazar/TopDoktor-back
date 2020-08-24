@@ -12,18 +12,18 @@ from datetime import datetime, timedelta
 @cross_origin()
 
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    data = request.get_json()
-    user = User.authenticate(**data)
 
-    if not user:
-        return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
-    token = jwt.encode({
-        'id':user.id,
-        'sub': user.email,
-        'iat':datetime.utcnow(),
-        'exp': datetime.utcnow() + timedelta(minutes=30)},
-        current_app.config['SECRET_KEY'])
-    return jsonify({ 'token': token.decode('UTF-8') })
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    email=request.get_json()['email']
+    password=request.get_json()['password']
+    user = User(email=email,password=password)
+    db.session.add(user)
+    db.session.commit()
+    result={
+        'email':email,
+        'password':password,
+    }
+    return jsonify({'result':result})
 
