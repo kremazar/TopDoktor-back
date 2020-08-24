@@ -29,8 +29,8 @@ def login():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    email=request.get_json()['email']
-    password=request.get_json()['password']
+    email=request.get_json(force=True)['email']
+    password=request.get_json(force=True)['password']
     user = User(email=email,password=password)
     db.session.add(user)
     db.session.commit()
