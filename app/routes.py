@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    data = request.get_json()
+    data = request.get_json(force=True)
     user = User.authenticate(**data)
 
     if not user:
@@ -42,10 +42,10 @@ def register():
 
 @app.route('/ocjeni', methods=['GET', 'POST'])
 def ocjeni():
-    ocjena=request.get_json()['ocjena']
-    komentar=request.get_json()['komentar']
-    user_id=request.get_json()['user_id']
-    doktor_id=request.get_json()['doktor_id']
+    ocjena=request.get_json(force=True)['ocjena']
+    komentar=request.get_json(force=True)['komentar']
+    user_id=request.get_json(force=True)['user_id']
+    doktor_id=request.get_json(force=True)['doktor_id']
     ocjena = Ocjena(ocjena=ocjena,komentar=komentar, user_id=user_id,doktor_id=doktor_id)
     db.session.add(ocjena)
     db.session.commit()
@@ -60,10 +60,10 @@ def ocjeni():
 
 @app.route('/dodajDoktora', methods=['GET', 'POST'])
 def dodaj_doktora():
-    ime=request.get_json()['ime']
-    prezime=request.get_json()['prezime']
-    specijalizacija=request.get_json()['specijalizacija']
-    bolnica=request.get_json()['bolnica']
+    ime=request.get_json(force=True)['ime']
+    prezime=request.get_json(force=True)['prezime']
+    specijalizacija=request.get_json(force=True)['specijalizacija']
+    bolnica=request.get_json(force=True)['bolnica']
     doktor = Doktori(ime=ime, prezime=prezime,specijalizacija=specijalizacija,bolnica=bolnica)
     db.session.add(doktor)
     db.session.commit()
