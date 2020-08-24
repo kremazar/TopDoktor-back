@@ -24,7 +24,7 @@ def login():
         'sub': user.email,
         'iat':datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(minutes=30)},
-        current_app.config['SECRET'])
+        current_app.config['SECRET_KEY'])
     return jsonify({ 'token': token.decode('UTF-8') })
 
 @app.route('/register', methods=['GET', 'POST'])
