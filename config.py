@@ -2,6 +2,6 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
-    SQLALCHEMY_DATABASE_URI = 'postgres://dlavmtxtspfvyi:57d4109bdc70b283acdf1183fb967a0c717e2719bb9fa83aa900f79ccf293fbf@ec2-46-137-156-205.eu-west-1.compute.amazonaws.com:5432/deepag3mr5vvva'
+    SECRET_KEY = os.environ.get('SECRET') or 'you-will-never-guess'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
