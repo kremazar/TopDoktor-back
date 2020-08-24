@@ -20,6 +20,7 @@ def login():
     if not user:
         return jsonify({ 'message': 'Invalid credentials', 'authenticated': False }), 401
     token = jwt.encode({
+        'id':user.id,
         'sub': user.email,
         'iat':datetime.utcnow(),
         'exp': datetime.utcnow() + timedelta(minutes=30)},
@@ -74,10 +75,17 @@ def dodaj_doktora():
     }
     return jsonify({'result':result})
 
+@app.route('/delete/<id>', methods=['DELETE'])
+def delete(id):
+    doktor = Doktori.query.filter_by(id=id).first()
+    db.session.delete(doktor)
+    db.session.commit()
+    return "Obrisano"
+
 
 @app.route('/doktori')
 def doktori():
-    doktor = Doktori.query.all()
+    doktor = Doktori.query.order_by(Doktori.prezime).all()
     return { "data": [
         {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica}
         for doc in doktor
