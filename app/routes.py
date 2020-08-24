@@ -14,16 +14,26 @@ from datetime import datetime, timedelta
 
 
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    email=request.get_json()['email']
-    password=request.get_json()['password']
-    user = User(email=email,password=password)
-    db.session.add(user)
-    db.session.commit()
-    result={
-        'email':email,
-        'password':password,
-    }
-    return jsonify({'result':result})
 
+@app.route('/doktori')
+def doktori():
+    doktor = Doktori.query.order_by(Doktori.prezime).all()
+    return { "data": [
+        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica}
+        for doc in doktor
+    ]}
+
+@app.route('/ocjena')
+def ocjena():
+    ocjena = Ocjena.query.all()
+    return { "data": [
+        {"id": doc.id,"ocjena": doc.ocjena,"komentar": doc.komentar,"doktor_id": doc.doktor_id,"user_id": doc.user_id}
+        for doc in ocjena
+    ]}
+
+@app.route('/doktor/<id>')
+def doktor(id):
+    doktor = Doktori.query.filter_by(id=id).first()
+    return { "data": [
+        {"id": doktor.id,"ime": doktor.ime,"prezime": doktor.prezime,"specijalizacija": doktor.specijalizacija,"bolnica": doktor.bolnica}
+    ]}
