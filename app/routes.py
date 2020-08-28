@@ -108,8 +108,7 @@ def doktor(id):
 
 @app.route('/najbolji')
 def najbolji():
-    doktor = Doktori.query.order_by(Doktori.prezime).all()
+    sve = Doktori.query.join(Ocjena, Doktori.id==Ocjena.doktor_id).add_columns(Doktor.id,Doktor.ime,Doktor.prezime,Doktor.bolnica,Doktor.specijalizacija,Ocjena.ocjena).filter_by(Ocjena.ocjena)
     return { "data": [
-        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica}
-        for doc in doktor
+        {"id": sve.id,"ime": sve.ime,"prezime": sve.prezime,"specijalizacija": sve.specijalizacija,"bolnica": sve.bolnica,"ocjena":sve.ocjena}
     ]}
