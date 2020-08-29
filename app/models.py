@@ -32,7 +32,7 @@ class User(db.Model):
         
 class Ocjena(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ocjena = db.Column(db.Float, asdecimal=False)
+    ocjena = db.Column(db.Numeric(precision=8, asdecimal=False, decimal_return_scale=None))
     komentar = db.Column(db.String(120))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     doktor_id = db.Column(db.Integer, db.ForeignKey('doktori.id'))
