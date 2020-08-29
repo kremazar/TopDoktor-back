@@ -8,6 +8,7 @@ from app import db
 from flask_cors import CORS, cross_origin
 import jwt
 from datetime import datetime, timedelta
+from decimal import Decimal
 @cross_origin()
 
 
@@ -132,6 +133,6 @@ def doktor(id):
 def najbolji():
     najbolji = db.engine.execute("select doktori.id,doktori.ime,doktori.prezime,doktori.specijalizacija,doktori.bolnica,avg(ocjena.ocjena) as prosjek from doktori join ocjena on doktori.id=ocjena.doktor_id GROUP by doktori.id ORDER by prosjek desc")
     return { "data": [
-        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica,"prosjek": doc.prosjek}
+        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica,"prosjek": Decimal(doc.prosjek)}
         for doc in najbolji
     ]}
