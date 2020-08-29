@@ -133,6 +133,6 @@ def doktor(id):
 def najbolji():
     najbolji = db.engine.execute("select doktori.id,doktori.ime,doktori.prezime,doktori.specijalizacija,doktori.bolnica,avg(ocjena.ocjena) as prosjek from doktori join ocjena on doktori.id=ocjena.doktor_id GROUP by doktori.id ORDER by prosjek desc")
     return { "data": [
-        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica,"prosjek": Decimal(doc.prosjek).pres=2}
+        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica,"prosjek": Decimal(doc.prosjek).prec=2}
         for doc in najbolji
     ]}
