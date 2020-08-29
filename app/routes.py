@@ -1,14 +1,14 @@
 from flask import Blueprint, jsonify, request, current_app
 from app import app
 from flask import render_template, flash, redirect
-from app.models import User,Doktori,Ocjena
+from app.models import User,Doktori,Ocjena,Clanak
 from flask import request,url_for
 from werkzeug.urls import url_parse
 from app import db
 from flask_cors import CORS, cross_origin
 import jwt
 from datetime import datetime, timedelta
-
+import simplejson as json
 @cross_origin()
 
 
@@ -44,8 +44,8 @@ def register():
 def ocjeni():
     ocjena=request.get_json(force=True)['ocjena']
     komentar=request.get_json(force=True)['komentar']
-    user_id=request.get_json()['user_id']
-    doktor_id=request.get_json()['doktor_id']
+    user_id=request.get_json(force=True)['user_id']
+    doktor_id=request.get_json(force=True)['doktor_id']
     ocjena = Ocjena(ocjena=ocjena,komentar=komentar, user_id=user_id,doktor_id=doktor_id)
     db.session.add(ocjena)
     db.session.commit()
@@ -75,6 +75,21 @@ def dodaj_doktora():
     }
     return jsonify({'result':result})
 
+@app.route('/dodajClanak', methods=['GET', 'POST'])
+def dodaj_clanak():
+    naslov=request.get_json(force=True)['naslov']
+    opis=request.get_json(force=True)['opis']
+    link=request.get_json(force=True)['link']
+    clanak = Clanak(naslov=naslov, opis=opis,link=link)
+    db.session.add(clanak)
+    db.session.commit()
+    result={
+        'naslov':naslov,
+        'opis':opis,
+        'link':link,
+    }
+    return jsonify({'result':result})
+
 @app.route('/delete/<id>', methods=['DELETE'])
 def delete(id):
     doktor = Doktori.query.filter_by(id=id).first()
@@ -99,6 +114,14 @@ def ocjena():
         for doc in ocjena
     ]}
 
+@app.route('/clanak')
+def clanak():
+    clanak = Clanak.query.all()
+    return { "data": [
+        {"naslov": doc.naslov,"opis": doc.opis,"link": doc.link}
+        for doc in clanak
+    ]}
+
 @app.route('/doktor/<id>')
 def doktor(id):
     doktor = Doktori.query.filter_by(id=id).first()
@@ -106,3 +129,10 @@ def doktor(id):
         {"id": doktor.id,"ime": doktor.ime,"prezime": doktor.prezime,"specijalizacija": doktor.specijalizacija,"bolnica": doktor.bolnica}
     ]}
 
+@app.route('/najbolji')
+def najbolji():
+    najbolji = db.engine.execute("select doktori.id,doktori.ime,doktori.prezime,doktori.specijalizacija,doktori.bolnica,avg(ocjena.ocjena) as prosjek,ocjena.komentar from doktori join ocjena on doktori.id=ocjena.doktor_id GROUP by doktori.id ORDER by prosjek desc")
+    return { "data": [
+        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica,"prosjek": doc.prosjek,"komentar": doc.komentar}
+        for doc in najbolji
+    ]}

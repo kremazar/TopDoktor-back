@@ -44,6 +44,12 @@ class Doktori(db.Model):
     specijalizacija = db.Column(db.String(120))
     bolnica = db.Column(db.String(120))
     doktor_id = db.relationship('Ocjena', backref='doktori', lazy='joined')
+
+class Clanak(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    naslov = db.Column(db.String(120))
+    opis = db.Column(db.String(1000))
+    link = db.Column(db.String(120))
     
 
  
