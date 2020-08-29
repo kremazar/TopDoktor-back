@@ -130,8 +130,8 @@ def doktor(id):
 
 @app.route('/najbolji')
 def najbolji():
-    najbolji = db.engine.execute("select doktori.id,doktori.ime,doktori.prezime,doktori.specijalizacija,doktori.bolnica,avg(ocjena.ocjena) as prosjek,ocjena.komentar from doktori join ocjena on doktori.id=ocjena.doktor_id GROUP by doktori.id ORDER by prosjek desc")
+    najbolji = db.engine.execute("select doktori.id,doktori.ime,doktori.prezime,doktori.specijalizacija,doktori.bolnica,avg(ocjena.ocjena) as prosjek from doktori join ocjena on doktori.id=ocjena.doktor_id GROUP by doktori.id ORDER by prosjek desc")
     return { "data": [
-        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica,"prosjek": doc.prosjek,"komentar": doc.komentar}
+        {"id": doc.id,"ime": doc.ime,"prezime": doc.prezime,"specijalizacija": doc.specijalizacija,"bolnica": doc.bolnica,"prosjek": doc.prosjek}
         for doc in najbolji
     ]}
