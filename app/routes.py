@@ -8,7 +8,6 @@ from app import db
 from flask_cors import CORS, cross_origin
 import jwt
 from datetime import datetime, timedelta
-import simplejson as json
 @cross_origin()
 
 
