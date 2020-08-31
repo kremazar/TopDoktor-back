@@ -110,7 +110,7 @@ def doktori():
 def ocjena():
     ocjena = Ocjena.query.all()
     return { "data": [
-        {"id": doc.id,"ocjena": doc.ocjena,"komentar": doc.komentar,"doktor_id": doc.doktor_id,"user_id": doc.user_id}
+        {"id": doc.id,"ocjena": doc.ocjena,"komentar": doc.komentar,"doktor_id": doc.doktor_id}
         for doc in ocjena
     ]}
 
