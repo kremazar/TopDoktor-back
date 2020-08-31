@@ -44,6 +44,7 @@ def register():
 def ocjeni():
     ocjena=request.get_json(force=True)['ocjena']
     komentar=request.get_json(force=True)['komentar']
+    user_id=request.get_json(force=True)['user_id']
     doktor_id=request.get_json(force=True)['doktor_id']
     ocjena = Ocjena(ocjena=ocjena,komentar=komentar, user_id=user_id,doktor_id=doktor_id)
     db.session.add(ocjena)
@@ -109,7 +110,7 @@ def doktori():
 def ocjena():
     ocjena = Ocjena.query.all()
     return { "data": [
-        {"id": doc.id,"ocjena": doc.ocjena,"komentar": doc.komentar,"doktor_id": doc.doktor_id}
+        {"id": doc.id,"ocjena": doc.ocjena,"komentar": doc.komentar,"doktor_id": doc.doktor_id,"user_id": doc.user_id}
         for doc in ocjena
     ]}
 
