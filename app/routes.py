@@ -44,7 +44,6 @@ def register():
 def ocjeni():
     ocjena=request.get_json(force=True)['ocjena']
     komentar=request.get_json(force=True)['komentar']
-    user_id=request.get_json(force=True)['user_id']
     doktor_id=request.get_json(force=True)['doktor_id']
     ocjena = Ocjena(ocjena=ocjena,komentar=komentar, user_id=user_id,doktor_id=doktor_id)
     db.session.add(ocjena)
